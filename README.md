@@ -16,7 +16,10 @@ Projeto aberto para catalogar, buscar e visualizar bens tombados em Recife.
 
 ## Getting Started
 
-> Adaptar para docker-compose
+Necessário:
+- Docker 20
+- Docker compose version 2.16
+- Node 18.15
 
 1. Rode o elastic search e espere serviço ficar healthy:
 
