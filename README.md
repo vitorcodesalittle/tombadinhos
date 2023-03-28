@@ -22,13 +22,28 @@ Projeto aberto para catalogar, buscar e visualizar bens tombados em Recife.
 
 > Adaptar para docker-compose
 
-First, run the development server:
+1. Rode o elastic search e espere serviço ficar healthy:
+
+```bash
+docker compose up --wait es01
+```
+
+2. ** Altere as permissões de config/* **
+Esse passo é temporário até configurar as permissões dos volumes corretamente (passando owner
+para um id de usuário comum entre o host e os containers)
+
+```bash
+chwon -R $USER:$USER ./config
+```
+
+
+3. Rode o servidor:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000) com seu browser.
 
 ## Histórico
 
