@@ -15,8 +15,8 @@ Projeto aberto para catalogar, buscar e visualizar bens tombados em Recife.
 3. Pensar em uma forma confiável e prática para especialistas aceitarem
    e refinarem sugestões.
 4. Linkar com APIs externas com mídia, como twitter e instagram, talvez
+   com campos tipo `twitterHashtags` e `instagramHashtags`
 5. Melhorar as visualizações com o mapa
-     com campos tipo `twitterHashtags` e `instagramHashtags`
 
 ## Getting Started
 
