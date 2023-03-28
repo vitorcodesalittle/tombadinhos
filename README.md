@@ -6,10 +6,6 @@ Projeto aberto para catalogar, buscar e visualizar bens tombados em Recife.
 
 ## Metas
 
-1. Trocar material ui por alguma outra lib de componentes que funcione melhor com server components. 😔
-
-  O problema do mui é usar apis que só podem ser usadas por client components, como `useRef`. Isso impede que eu use esses componentes em server components.
-
 1. ~~API para full text search e inserção de dados~~
 2. Permitir a sugestão de alterações das informações de um edifício
 3. Pensar em uma forma confiável e prática para especialistas aceitarem
