@@ -6,8 +6,8 @@
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  background: rgb(108,44,222);
+  background: radial-gradient(circle, rgba(108,44,222,1) 0%, rgba(238,108,159,1) 100%);
 
   --primary-glow: conic-gradient(
     from 180deg at 50% 50%,
@@ -73,16 +73,12 @@
   }
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
 html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  min-height: 100vh;
+  color: white;
 }
 
 body {
