@@ -1,8 +1,5 @@
 import PlaceDetailsView from "@/components/views/PlaceDetailsView"
-import { config } from "@/config"
-import { GooglePlacesApi } from "@/google/placesApi"
-import { PlacesDbElastic, getEsConfig } from "@/places/places-db-elastic"
-import { PlacesService } from "@/places/places-service"
+import { placesService } from "services"
 
 type PageParams = {
   params: { id: string };
@@ -11,11 +8,7 @@ type PageParams = {
 const PlaceDetails = async ({
   params
 }: PageParams) => {
-  const id = params.id
-  const db = new PlacesDbElastic(getEsConfig(config));
-  const googlePlacesApi = new GooglePlacesApi(config.googleApiKey)
-  const placesServices = new PlacesService(db, googlePlacesApi);
-  const place = await placesServices.getPlace({ placeId: id })
+  const place = await placesService().getPlace({ placeId: params.id })
 
   return (
     <PlaceDetailsView place={place}/>
