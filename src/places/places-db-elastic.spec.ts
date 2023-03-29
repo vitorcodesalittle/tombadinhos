@@ -38,7 +38,6 @@ describe(
     beforeEach(async () => {
 
       await deleteAll(
-        db,
         PLACES_INDEX_NAME
       );
       mockedPlaces = []
@@ -142,7 +141,7 @@ describe(
         );
 
         it(
-          "search works on terms that don't match exactly (2)",
+          "searchh works on terms that don't match exactly (2)",
           async () => {
 
             for (const example of examples) {

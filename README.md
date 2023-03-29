@@ -21,7 +21,7 @@ Necessário:
 - Docker compose version 2.16
 - Node 18.15
 
-1. Rode o elastic search e espere serviço ficar healthy:
+1. Rode o elastic search e espere serviço ficar de pé:
 
 ```bash
 docker compose up --wait es01
@@ -32,17 +32,27 @@ Esse passo é temporário até configurar as permissões dos volumes corretament
 para um id de usuário comum entre o host e os containers)
 
 ```bash
-chwon -R $USER:$USER ./config
+sudo chown -R $USER:$USER ./config
 ```
 
 
-3. Rode o servidor:
+3. Rode o servidor ou os testes:
 
 ```bash
+# Começa um servidor na porta 8080 ou 3000 dependendo do humor do next
 npm run dev
 ```
 
-Abra [http://localhost:3000](http://localhost:3000) com seu browser.
+```bash
+# Roda os testes de unidade com jest
+npm run test
+```
+
+```bash
+# Roda os testes com cypress na CLI
+npm run test:e2e
+```
+
 
 ## Histórico
 

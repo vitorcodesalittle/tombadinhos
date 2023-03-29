@@ -14,7 +14,8 @@ export interface ApiConfig {
     caPath: string,
     url: string
   },
-  googleApiKey: string
+  googleApiKey: string,
+  secret: string
 }
 
 const getRequiredEnv = (envName: string): string => {
@@ -68,7 +69,8 @@ export const config: ApiConfig = {
   "http2": Boolean(getEnvOr(
     "HTTP2",
     ""
-  ))
+  )),
+  "secret": "aisjdiasidj"
 };
 
 const NODE_ENV_ALLOWED = [

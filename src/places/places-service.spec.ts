@@ -26,7 +26,6 @@ describe(
     beforeEach(async () => {
 
       await deleteAll(
-        db,
         PLACES_INDEX_NAME
       );
       await Promise.all(range(5).map(() => db.writePlace(

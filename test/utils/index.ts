@@ -2,7 +2,8 @@ import { mockPlace, randomInRange, randomString } from "@/common/util";
 import { GoogleStatus, IGooglePlacesApi, PlacesCandidate, PlacesFindPlaceFromTextResponse } from "@/google/placesApi";
 import { getEsConfig, PlacesDbElastic } from "@/places/places-db-elastic";
 import { PlacesService } from "@/places/places-service";
-import { ApiConfig } from "@/config";
+import { ApiConfig, config, } from "@/config";
+import { Client, ClientOptions } from "@elastic/elasticsearch";
 
 
 export const mockLatLon = () => ({
@@ -39,14 +40,17 @@ export const mockEnrichedPlace = () => {
     googleBasicInfo
   }
 }
-export const deleteAll = (placesDb: PlacesDbElastic, index: string) =>
-  placesDb.client.deleteByQuery({
+export const deleteAll = (index: string, customConfig?: ClientOptions) => {
+  const options = customConfig || getEsConfig(config)
+  const client = new Client(options)
+  return client.deleteByQuery({
     query: {
       match_all: {}
     },
     refresh: true,
     index,
   })
+}
 
 export class MockGooglePlacesApi implements IGooglePlacesApi {
   async findPlace(): Promise<PlacesFindPlaceFromTextResponse> {

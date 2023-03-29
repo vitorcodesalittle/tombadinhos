@@ -67,105 +67,113 @@ export class PlacesDbElastic implements IPlacesDB {
 
   private convertSearchResultToHit = <T,>(response: SearchResponse<T>): (T & { _id: string })[] =>
     (response.hits.hits
-      .map((hit) => ({ _id: hit._id, ...hit._source})) as (T & { _id: string })[])
+      .map((hit) => ({ _id: hit._id, ...hit._source })) as (T & { _id: string })[])
       .filter((item) => Boolean(item));
 
-getPlaces: IPlacesDB["getPlaces"] = async ({ limit, skip, lat, lon, query }) => {
+  getPlaces: IPlacesDB["getPlaces"] = async ({ limit, skip, lat, lon, query }) => {
 
-  let from = 0;
-  if (skip) {
+    let from = 0;
+    if (skip) {
 
-    from = skip;
+      from = skip;
 
-  }
+    }
 
-  const places = await this.client.search<EnrichedPlace>({
-    from,
-    "size": limit || 10000,
-    "query": {
-      "bool": {
-        "should": [
-          {
-            "match": {
-              "name": {
-                "query": query || "",
-                "fuzziness": "AUTO"
+    const places = await this.client.search<EnrichedPlace>({
+      from,
+      "size": limit || 10000,
+      "query": {
+        "bool": {
+          "should": [
+            {
+              "match": {
+                "name": {
+                  "query": query || "",
+                  "fuzziness": "AUTO"
+                }
+              }
+            },
+            {
+              "match": {
+                "description": {
+                  "query": query || "",
+                  "fuzziness": "AUTO"
+                }
               }
             }
-          },
-          {
-            "match": {
-              "description": {
-                "query": query || "",
-                "fuzziness": "AUTO"
+          ],
+          "filter": {
+            "geo_distance": {
+              "distance": "900000000km",
+              "location": {
+                lat,
+                lon
               }
-            }
-          }
-        ],
-        "filter": {
-          "geo_distance": {
-            "distance": "900000000km",
-            "location": {
-              lat,
-              lon
             }
           }
         }
       }
-    }
-  });
-  return this.convertSearchResultToHit(places);
-};
+    });
+    return this.convertSearchResultToHit(places);
+  };
 
-count: IPlacesDB["count"] = async ({ lat, lon, query }) => {
+  count: IPlacesDB["count"] = async ({ lat, lon, query }) => {
 
-  const places = await this.client.count({
+    const places = await this.client.count({
+      "index": PLACES_INDEX_NAME,
+      "query": {
+        "bool": {
+          "should": [
+            {
+              "match": {
+                "name": query
+              }
+            },
+            {
+              "match": {
+                "description": query
+              }
+            }
+          ],
+          "filter": {
+            "geo_distance": {
+              "distance": "20000km",
+              "location": {
+                lat,
+                lon
+              }
+            }
+          }
+        }
+      }
+    });
+    return places.count;
+
+  };
+
+  writePlace: IPlacesDB["writePlace"] = (info, refresh = false) => this.client.index({
     "index": PLACES_INDEX_NAME,
-    "query": {
-      "bool": {
-        "should": [
-          {
-            "match": {
-              "name": query
-            }
-          },
-          {
-            "match": {
-              "description": query
-            }
-          }
-        ],
-        "filter": {
-          "geo_distance": {
-            "distance": "20000km",
-            "location": {
-              lat,
-              lon
-            }
-          }
-        }
-      }
-    }
+    "document": info,
+    refresh
   });
-  return places.count;
 
-};
+  getPlaceById: IPlacesDB['getPlaceById'] = async (placeId) => {
+    try {
+      const place = await this.client.get<Omit<EnrichedPlace, '_id'>>({
+        index: PLACES_INDEX_NAME,
+        id: placeId,
+        refresh: true,
+      })
 
-writePlace: IPlacesDB["writePlace"] = (info, refresh = false) => this.client.index({
-  "index": PLACES_INDEX_NAME,
-  "document": info,
-  refresh
-});
+      if (place?.found)
+        return { _id: place._id, ...(place._source as Omit<EnrichedPlace, '_id'>) }
 
-getPlaceById: IPlacesDB['getPlaceById'] = async (placeId) => {
-  const place = await this.client.get<Omit<EnrichedPlace, '_id'>>({
-    index: PLACES_INDEX_NAME,
-    id: placeId,
-    refresh: true,
-  })
-  if (place?.found)
-    return { _id: place._id, ...(place._source as Omit<EnrichedPlace, '_id'>) }
-  return undefined
-}
+      return undefined
+    } catch (err) {
+      console.error('ERROR GETTING PLACE')
+      console.error(err)
+      return undefined
+    }
+  }
 }
 
