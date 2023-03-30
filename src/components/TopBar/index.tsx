@@ -34,11 +34,9 @@ function TopBar() {
   const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
-
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
-
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
@@ -136,7 +134,6 @@ function TopBar() {
               </Link>
             ))}
           </Box>
-
         </Toolbar>
       </Container>
     </AppBar>

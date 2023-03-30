@@ -12,6 +12,7 @@ export class UserService implements IUserService {
     this.userDb = userDb
     this.config = config;
   }
+
   async create(user: UserBasic): Promise<UserBasic> {
     if (this.config.allowedEmails.includes(user.email))
       return this.userDb.create(user)

@@ -1,6 +1,7 @@
 'use client'
 
 import { EnrichedPlace } from "@/common"
+import Editor from "@/components/Editor"
 import { ProtectionChips, TypeOfProtecionChips } from "@/components/InformationChip"
 import Section from "@/components/Section"
 import { EditRounded, MapRounded } from "@mui/icons-material"
@@ -45,7 +46,9 @@ const PlaceDetailsView = ({ place }: PlaceDetailsViewPrpos) => {
         </Box>
         <Typography data-cy="place-description">{place.description}</Typography>
       </Section>
+      <Editor/>
     </div>
   )
 }
+
 export default PlaceDetailsView

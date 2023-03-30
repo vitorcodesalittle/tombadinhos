@@ -1,6 +1,10 @@
 'use client';
 
-import { Box, Card, Paper, Typography, useTheme } from "@mui/material";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import { useTheme } from '@mui/material'
 
 
 const HomeView = () => {
@@ -8,7 +12,7 @@ const HomeView = () => {
 
   return (
     <Box sx={{ borderRadius: 4, maxWidth: 600, margin: 10, padding: 5, backgroundColor: theme.palette.primary.dark }} component={Card}>
-      <Typography sx={{ ...theme.typography.h3 }}>
+      <Typography sx={{ ...theme.typography?.h3 }}>
         Catálogo de Edifícios Tombados
       </Typography>
       <Typography sx={{ ...theme.typography.body1 }}>
