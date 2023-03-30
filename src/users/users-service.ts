@@ -26,7 +26,7 @@ export class UserService implements IUserService {
     if (result?.error === 'invalid-token') {
       throw new ApiError('JWT token is not valid', UserServiceError.InvalidJWT)
     } else if (result?.error && ['token-expired', 'unknown-error'].includes(result?.error)) {
-      throw new ApiError('JWT token is expired', UserServiceError.ExpiredJWT)
+      throw new ApiError('JWT token expired', UserServiceError.ExpiredJWT)
     } else if (result.data) {
       return result.data
     } else {

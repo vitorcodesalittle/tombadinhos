@@ -4,7 +4,7 @@ import {PlaceServicepError} from '@/places/errors'
 enum AppError {
   InternalError = 'internal-error'
 }
-type Code = UserServiceError | PlaceServicepError | AppError
+export type ErrorCode = UserServiceError | PlaceServicepError | AppError
 export class ApiError extends Error {
     code: Code
     constructor(m: string = '', code?: Code) {

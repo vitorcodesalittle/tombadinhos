@@ -3,6 +3,8 @@ import { UserDbElastic } from "./users-db-elastic"
 import { UserService } from "./users-service"
 import { config } from "@/config"
 import { createToken } from "./jwt"
+import { UserServiceError } from "./errors"
+import { ApiError } from "@/apiError"
 
 describe('UserService', () => {
   let userDb: UserDbElastic
@@ -53,8 +55,8 @@ describe('UserService', () => {
       try {
         await userService.get(token)
       } catch (err) {
-        expect(err).toBeInstanceOf(Error)
-        expect(err?.message).toBe('jwt expired')
+        expect(err).toBeInstanceOf(ApiError)
+        expect(err?.code).toBe(UserServiceError.ExpiredJWT)
       }
     })
   })
