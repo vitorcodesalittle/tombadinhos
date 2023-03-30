@@ -15,22 +15,30 @@ export interface ApiConfig {
     url: string
   },
   googleApiKey: string,
-  secret: string
+  secret: string,
+  allowedEmails: string[]
 }
 
 const getRequiredEnv = (envName: string): string => {
 
-    const value = process.env[envName];
-    if (!value) {
+  const value = process.env[envName];
+  if (!value) {
 
-      throw new Error(`Missing required env: ${envName}`);
+    throw new Error(`Missing required env: ${envName}`);
 
-    }
-    return value;
+  }
+  return value;
 
-  },
+},
 
-  getEnvOr = (envName: string, otherwise: string): string => process.env[envName] || otherwise;
+  getEnvOr = (envName: string, otherwise: string): string => process.env[envName] || otherwise,
+
+  getArrayOfStrings = (envName: string, required = true): string[] => {
+    if (required && !process.env[envName]?.length) throw new Error(`Missing required env: ${envName}`)
+    const envValue = (envName in process.env && typeof process.env[envName] === 'string' ? process.env[envName] as string : '')
+    return envValue.split(",").map(str => str.trim())
+  }
+
 
 
 export const config: ApiConfig = {
@@ -70,7 +78,8 @@ export const config: ApiConfig = {
     "HTTP2",
     ""
   )),
-  "secret": "aisjdiasidj"
+  "secret": getEnvOr("SECRET", 'aisjdiasidj'),
+  "allowedEmails": getArrayOfStrings("ALLOWED_EMAILS")
 };
 
 const NODE_ENV_ALLOWED = [

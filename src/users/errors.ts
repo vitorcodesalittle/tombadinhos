@@ -1,4 +1,6 @@
 export enum UserServiceError {
-  InvalidJWT = 'invalid-jwt'
+  InvalidJWT = 'invalid-jwt',
+  ExpiredJWT= 'expired-jwt',
+  EmailNotListed = 'email-not-listed'
 }
 

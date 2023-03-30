@@ -21,10 +21,8 @@ describe('UserService', () => {
         email: testEmail,
       })
       expect(user.email).toBe(testEmail)
-      console.info('create user', user)
       // Creates mock token with user
       const token = await createToken(user, config.secret);
-      console.info('created token', token)
       // Gets user from token
       const userFromToken = await userService.get(token)
       expect(userFromToken.email).toBe(user.email)
