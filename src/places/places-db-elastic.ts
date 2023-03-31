@@ -171,7 +171,6 @@ export class PlacesDbElastic implements IPlacesDB {
       return undefined
     } catch (err) {
       console.error('ERROR GETTING PLACE')
-      console.error(err)
       return undefined
     }
   }

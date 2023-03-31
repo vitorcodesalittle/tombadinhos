@@ -1,4 +1,4 @@
-import { placesService } from "services"
+import { placesService } from "@/services"
 import SearchInput from "../../components/SearchInput"
 import SearchResults from "../../components/SearchResults"
 import SearchPlacesView from "@/components/views/SearchPlaceView"

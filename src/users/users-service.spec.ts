@@ -5,14 +5,29 @@ import { config } from "@/config"
 import { createToken } from "./jwt"
 import { UserServiceError } from "./errors"
 import { ApiError } from "@/apiError"
+import { IAuthService } from "@/auth/types"
+import { IEmailService } from "@/email/types"
+import { deleteAll } from "test/utils"
+import {expect} from '@jest/globals'
 
 describe('UserService', () => {
   let userDb: UserDbElastic
   let userService: UserService
-  beforeAll(() => {
-    // Setups usersService and usersDb for following tests
-    userDb = new UserDbElastic(getEsConfig(config))
-    userService = new UserService(userDb, config)
+  let authService: IAuthService
+  let emailService: IEmailService
+  beforeAll(async () => {
+    const esConfig = getEsConfig(config)
+    userDb = new UserDbElastic(esConfig)
+    await userDb.setupIndexes()
+    await deleteAll('users', esConfig)
+    authService = {
+      verifyCode: jest.fn(),
+      createVerificationCode: jest.fn()
+    }
+    emailService = {
+      sendEmail: jest.fn()
+    }
+    userService = new UserService(userDb, authService, config, emailService)
   })
 
   describe('get(token)', () => {
@@ -69,6 +84,30 @@ describe('UserService', () => {
         email: testEmail,
       })
       expect(user._id).toBeTruthy()
+    })
+  })
+
+  describe('verifyEmail(email) ', () => {
+    it('creates verification code with authService', async () => {
+      const testEmail = 'userijdaisjdiasdiajsidjauwequ@domain.com'
+      const testUser = await userDb.create({
+        email: testEmail,
+      })
+      expect(testUser).toHaveProperty('_id')
+      const baseUrl = ''
+      const code = '213', linkRegex = new RegExp(`^http:\/\/localhost:8080\/verify\\?tk=.+$`)
+      const createVerificationCodeMock = jest.fn(async () => code)
+      authService.createVerificationCode =  createVerificationCodeMock
+      const sendEmailMock = jest.fn(async () => ({ confirmed: true }))
+      emailService.sendEmail =  sendEmailMock
+      await userService.verifyEmail(testEmail)
+      expect(authService.createVerificationCode).toBeCalledWith(testEmail)
+      // assert email service is called with correct params
+      expect(sendEmailMock.mock.lastCall).toHaveLength(1)
+      const arg = sendEmailMock.mock.lastCall[0]
+      expect(arg.email).toBe(testEmail)
+      expect(arg.templatePath).toBe('templates/account-verify')
+      expect(arg.data.link).toMatch(linkRegex)
     })
   })
 })

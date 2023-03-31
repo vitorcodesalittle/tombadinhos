@@ -5,10 +5,9 @@ import { deleteAll } from "../../test/utils"
 describe('UserDbElastic', () => {
   let userDb: UserDbElastic
 
-  beforeAll(() => {
+  beforeAll(async() => {
     userDb = new UserDbElastic(getEsConfig(config))
-  })
-  beforeEach(async () => {
+    await userDb.setupIndexes()
     await deleteAll('users')
   })
     
@@ -22,6 +21,9 @@ describe('UserDbElastic', () => {
       const createdUser = await userDb.create(user)
       expect(createdUser.email).toBe(email)
       expect(createdUser._id).toBeTruthy()
+
+      const gotUser = await userDb.getByEmail(user.email)
+      expect(gotUser).toEqual(createdUser)
     })
   })
 

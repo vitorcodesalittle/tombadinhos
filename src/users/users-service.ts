@@ -1,16 +1,50 @@
-import { ApiConfig } from "@/config";
-import { validateToken } from "./jwt";
-import { IUserService, IUserDB, User, UserBasic } from "./types";
+import { ApiConfig, config } from "@/config";
+import { createToken, validateToken } from "./jwt";
+import { IUserService, IUserDB, User, UserBasic, UserRegistered } from "./types";
 import { UserServiceError } from "./errors";
 import { ApiError } from '@/apiError'
+import { IEmailService } from "@/email/types";
+import { IAuthService } from "@/auth/types";
 
 export class UserService implements IUserService {
 
   private userDb: IUserDB
+  private authCodeDb: IAuthService
+  private emailService: IEmailService
   private config: ApiConfig
-  constructor(userDb: IUserDB, config: ApiConfig) {
+  constructor(userDb: IUserDB, authCodeDb: IAuthService, config: ApiConfig, emailService: IEmailService) {
     this.userDb = userDb
     this.config = config;
+    this.authCodeDb = authCodeDb
+    this.emailService = emailService
+  }
+  async update(token: string, update: Partial<UserRegistered>): Promise<User> {
+    // gets user from token
+    const user = await this.get(token)
+    // updates user
+    const updatedUser = await this.userDb.update({
+      ...user,
+      ...update
+    })
+    return updatedUser
+  }
+
+  async verifyEmail(email: string): Promise<boolean> {
+    const code: string = await this.authCodeDb.createVerificationCode(email)
+    const user = await this.userDb.getByEmail(email)
+    if (!user) throw new ApiError('user not found', UserServiceError.UserNotFound)
+    const token: string = await createToken(user, config.secret)
+    const baseUrl = "http://localhost:8080"
+    const link: string = `${baseUrl}/verify?tk=${token}`
+    const emailresult = await this.emailService.sendEmail({
+      templatePath: 'templates/account-verify',
+      email,
+      data: {
+        code, link
+      }
+    })
+    console.info('send email result: ', emailresult)
+    return emailresult.confirmed
   }
 
   async create(user: UserBasic): Promise<UserBasic> {

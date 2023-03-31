@@ -1,14 +1,4 @@
-export interface IUserDB {
-  create(user: Omit<UserBasic, '_id'>): Promise<UserBasic>
-  update(user: Partial<UserRegistered>): Promise<Partial<UserRegistered>>
-}
 
-export interface IUserService {
-  create(user: UserBasic): Promise<UserBasic>
-  get(token: string): Promise<User>
-}
-
-export type User = UserRegistered | UserBasic
 
 
 export type UserBasic = {
@@ -18,9 +8,24 @@ export type UserBasic = {
 
 type GenderId = 'ele' | 'ela' | 'elu'
 
-export type UserRegistered = UserBasic & {
+export type UserRegistered = UserBasic & Partial<{
   fullName: string
   genderId: GenderId
   expertiseDescription: string
+}>
+
+export type User = UserRegistered | UserBasic
+
+export interface IUserDB {
+  getByEmail(email: string): Promise<User | undefined>
+  create(user: Omit<UserBasic, '_id'>): Promise<UserBasic>
+  update(user: Partial<UserRegistered>): Promise<User>
+  setupIndexes(): Promise<void>
 }
 
+export interface IUserService {
+  create(user: UserBasic): Promise<UserBasic>
+  get(token: string): Promise<User>
+  update(token: string, update: Partial<UserRegistered>): Promise<User>
+  verifyEmail(email: string): Promise<boolean>
+}

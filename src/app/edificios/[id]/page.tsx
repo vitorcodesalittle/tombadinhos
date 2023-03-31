@@ -1,5 +1,5 @@
 import PlaceDetailsView from "@/components/views/PlaceDetailsView"
-import { placesService } from "services"
+import { placesService } from "@/services"
 
 type PageParams = {
   params: { id: string };
