@@ -18,7 +18,7 @@ export const placesService = (): IPlaceService => {
 }
 export const usersService = (): IUserService => {
   const userDb = new UserDbElastic(getEsConfig(config))
-  const authService = new AuthService()
+  const authService = new AuthService(getEsConfig(config))
   const emailService = new EmailService()
   const service = new UserService(userDb, authService, config, emailService)
   return service

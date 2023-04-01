@@ -1,5 +1,5 @@
 import { Client, ClientOptions, errors } from "@elastic/elasticsearch";
-import { IUserDB, User, UserBasic, UserRegistered } from "./types";
+import { IUserDB, User, UserBasic, } from "./types";
 
 class UniqueEmailViolationError extends Error {
     constructor(m?: string) {
@@ -66,7 +66,7 @@ export class UserDbElastic implements IUserDB {
       throw 'invalid-update-payload'
     }
     const { _id, ...updateUserFields } = user
-    const updateResult = await this.client.update<UserRegistered,Partial<UserRegistered>>({
+    const updateResult = await this.client.update<User,Partial<User>>({
       index: 'users',
       id: _id,
       body: {

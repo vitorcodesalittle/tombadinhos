@@ -21,6 +21,7 @@ describe('UserService', () => {
     await userDb.setupIndexes()
     await deleteAll('users', esConfig)
     authService = {
+      setupIndexes: jest.fn(),
       verifyCode: jest.fn(),
       createVerificationCode: jest.fn()
     }
@@ -89,12 +90,11 @@ describe('UserService', () => {
 
   describe('verifyEmail(email) ', () => {
     it('creates verification code with authService', async () => {
-      const testEmail = 'userijdaisjdiasdiajsidjauwequ@domain.com'
+      const testEmail = 'vitormaia1890@gmail.com'
       const testUser = await userDb.create({
         email: testEmail,
       })
       expect(testUser).toHaveProperty('_id')
-      const baseUrl = ''
       const code = '213', linkRegex = new RegExp(`^http:\/\/localhost:8080\/verify\\?tk=.+$`)
       const createVerificationCodeMock = jest.fn(async () => code)
       authService.createVerificationCode =  createVerificationCodeMock

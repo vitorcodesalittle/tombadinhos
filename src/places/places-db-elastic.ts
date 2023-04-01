@@ -170,8 +170,12 @@ export class PlacesDbElastic implements IPlacesDB {
 
       return undefined
     } catch (err) {
-      console.error('ERROR GETTING PLACE')
-      return undefined
+      if (err instanceof errors.ResponseError) {
+        // when error is from missing document return undefined
+        if (! err.body.found || err.body.error.type === 'index_not_found_exception' || err.body.error.type === 'document_missing_exception')
+          return undefined
+      }
+      throw err
     }
   }
 }

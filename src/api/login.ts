@@ -2,6 +2,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { UserService } from '@/users/users-service'
 import { usersService } from '@/services'
+import { ApiError } from '@/apiError'
+import { UserServiceError } from '@/users/errors'
 
 let apiURL = 'http://localhost:8080'
 
@@ -14,7 +16,7 @@ export default async function handler(
     const confirmed = await usersService().verifyEmail(email)
     if (confirmed)
       res.status(200).json({
-        "message": "Email send"
+        "message": "Email sent"
       })
     else {
       res.status(500).json({
@@ -22,6 +24,12 @@ export default async function handler(
       })
     }
   } catch (error) {
+    console.error(error)
+    console.error(error instanceof ApiError)
+    if (error instanceof ApiError) {
+      if (error.code === UserServiceError.EmailNotListed)
+        return res.status(400).json({code: error.code, message: error.message})
+    }
     res.status(500).json({ error })
   }
 }

@@ -1,6 +1,6 @@
 import { ApiConfig, config } from "@/config";
 import { createToken, validateToken } from "./jwt";
-import { IUserService, IUserDB, User, UserBasic, UserRegistered } from "./types";
+import { IUserService, IUserDB, User, UserBasic, } from "./types";
 import { UserServiceError } from "./errors";
 import { ApiError } from '@/apiError'
 import { IEmailService } from "@/email/types";
@@ -18,7 +18,7 @@ export class UserService implements IUserService {
     this.authCodeDb = authCodeDb
     this.emailService = emailService
   }
-  async update(token: string, update: Partial<UserRegistered>): Promise<User> {
+  async update(token: string, update: Partial<User>): Promise<Partial<User>> {
     // gets user from token
     const user = await this.get(token)
     // updates user
@@ -26,13 +26,17 @@ export class UserService implements IUserService {
       ...user,
       ...update
     })
+    if (!updatedUser) throw new ApiError(UserServiceError.UserNotFound)
     return updatedUser
   }
 
   async verifyEmail(email: string): Promise<boolean> {
+    let user = await this.userDb.getByEmail(email)
+    if (!this.config.allowedEmails.includes(email)) throw new ApiError('Email is not listed', UserServiceError.EmailNotListed)
+    if (!user)  {
+      user = await this.create({email})
+    }
     const code: string = await this.authCodeDb.createVerificationCode(email)
-    const user = await this.userDb.getByEmail(email)
-    if (!user) throw new ApiError('user not found', UserServiceError.UserNotFound)
     const token: string = await createToken(user, config.secret)
     const baseUrl = "http://localhost:8080"
     const link: string = `${baseUrl}/verify?tk=${token}`
@@ -43,11 +47,10 @@ export class UserService implements IUserService {
         code, link
       }
     })
-    console.info('send email result: ', emailresult)
     return emailresult.confirmed
   }
 
-  async create(user: UserBasic): Promise<UserBasic> {
+  async create(user: UserBasic): Promise<User> {
     if (this.config.allowedEmails.includes(user.email))
       return this.userDb.create(user)
     else {
