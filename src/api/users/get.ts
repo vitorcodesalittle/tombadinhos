@@ -1,16 +1,17 @@
 // A NextJS API route that handle a user request
 import { NextApiRequest, NextApiResponse } from 'next'
 import { IUserService } from '@/users/types'
+import { getUserService } from '@/services'
 
-let userService: IUserService
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { token } = req.body
+  // get token from Authorization header
+  const token = req.headers.authorization
   try {
-    const user = await userService.get(token)
+    const user = await getUserService().get(token)
     res.status(200).json({
       data: user
     })

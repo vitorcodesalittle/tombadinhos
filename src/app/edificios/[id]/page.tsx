@@ -1,5 +1,5 @@
 import PlaceDetailsView from "@/components/views/PlaceDetailsView"
-import { placesService } from "@/services"
+import { getPlacesService } from "@/services"
 
 type PageParams = {
   params: { id: string };
@@ -8,7 +8,7 @@ type PageParams = {
 const PlaceDetails = async ({
   params
 }: PageParams) => {
-  const place = await placesService().getPlace({ placeId: params.id })
+  const place = await getPlacesService().getPlace({ placeId: params.id })
 
   return (
     <PlaceDetailsView place={place}/>

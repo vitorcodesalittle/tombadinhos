@@ -8,17 +8,23 @@ import { UserService } from "./users/users-service";
 import { UserDbElastic } from "./users/users-db-elastic";
 import { EmailService } from "./email";
 import { AuthService } from "./auth/auth-service";
+import { IAuthService } from "./auth/types";
 
 
-export const placesService = (): IPlaceService => {
+export const getPlacesService = (): IPlaceService => {
   const placesDb = new PlacesDbElastic(getEsConfig(config));
   const googlePlaces = new GooglePlacesApi(config.googleApiKey)
   const service= new PlacesService(placesDb, googlePlaces)
   return service
 }
-export const usersService = (): IUserService => {
-  const userDb = new UserDbElastic(getEsConfig(config))
+export const getAuthService = (): IAuthService => {
   const authService = new AuthService(getEsConfig(config))
+  return authService;
+
+}
+export const getUserService = (): IUserService => {
+  const userDb = new UserDbElastic(getEsConfig(config))
+  const authService = getAuthService()
   const emailService = new EmailService()
   const service = new UserService(userDb, authService, config, emailService)
   return service
