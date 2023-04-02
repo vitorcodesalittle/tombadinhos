@@ -32,7 +32,7 @@ Esse passo é temporário até configurar as permissões dos volumes corretament
 para um id de usuário comum entre o host e os containers)
 
 ```bash
-chwon -R $USER:$USER ./config
+chown -R $USER:$USER ./config
 ```
 
 
